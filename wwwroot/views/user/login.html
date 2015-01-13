@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="pragma" content="no-cache">
+	<meta http-equiv="cache-control" content="no-cache">
+	<meta http-equiv="expires" content="0">
+	<meta name="description" content="微信分享">
+	<meta name="keywords" content="微信分享">
+	<title>微信分享</title>
+
+	<!--[if lt IE 9]>
+	<link href="/static/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
+	<script src="http://cdn.staticfile.org/html5shiv/3.7.2/html5shiv.min.js"></script>
+	<script src="http://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+	<script src="http://cdn.staticfile.org/jquery/1.11.1/jquery.min.js"></script>
+	<script src="http://cdn.staticfile.org/twitter-bootstrap/3.3.0/js/bootstrap.min.js"></script>
+	<![endif]-->
+
+	<!--[if gte IE 9]><!-->
+	<link rel="stylesheet" href="http://cdn.staticfile.org/twitter-bootstrap/3.3.0/css/bootstrap.min.css">
+	<script src="http://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+	<script src="http://cdn.staticfile.org/twitter-bootstrap/3.3.0/js/bootstrap.min.js"></script>
+	<!--<![endif]-->
+
+	<style type="text/css">
+		body {
+			padding-top: 40px;
+			padding-bottom: 40px;
+		}
+	</style>
+
+	<script>
+		"use strict";
+
+		// ErrCodeOK                  = 0
+		// ErrCodeAuthenticateFailed  = 1
+		// ErrCodeBadRequest          = 400
+		// ErrCodeUnauthenticated     = 401
+		// ErrCodeInternalServerError = 500
+
+		$.ajaxSetup ({
+			"cache": false //close AJAX cache
+		});
+
+		$(document).ready(function(){
+			$("#login_form").submit(function(event) {
+				event.preventDefault();
+
+				var username = $("#login_form_username").val();
+				if (username === "") {
+					window.alert("请输入用户名");
+					return;
+				}
+				var password = $("#login_form_password").val();
+				if (password === "") {
+					window.alert("请输入密码");
+					return;
+				}
+
+				$.ajax({
+					"url": "/user/login",
+					"type": "POST",
+					"dataType": "json",
+					"data": $(this).serialize(),
+					"error": function(jqXHR, textStatus, errorThrown) {
+						window.alert("请求出现错误");
+					},
+					"success": function(data, textStatus, jqXHR){
+						if (data.err_code !== 0) {
+							window.alert(data.err_msg);
+							return;
+						}
+						window.location.href = "/user/userinfo.html?access_token=" + data.access_token;
+						return;
+					}
+				});
+			});
+		});
+	</script>
+</head>
+<body>
+	<div class="container"><div class="row"><div class="col-sm-4 col-sm-offset-4">
+		<form id="login_form" class="form-horizontal" role="form">
+			<div class="form-group">
+				<label for="login_form_username" class="col-sm-4 control-label">用户名</label>
+				<div class="col-sm-8">
+					<input id="login_form_username" type="text" class="form-control" placeholder="用户名" name="username" required autofocus>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="login_form_password" class="col-sm-4 control-label">密码</label>
+				<div class="col-sm-8">
+					<input id="login_form_password" type="password" class="form-control" placeholder="密码" name="password" required>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-8 col-sm-offset-4">
+					<button class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
+				</div>
+			</div>
+		</form>
+	</div></div></div>
+</body>
+</html>
+

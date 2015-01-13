@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="微信分享">
+	<meta name="keywords" content="微信分享">
+	<title>微信分享</title>
+
+	<!--[if lt IE 9]>
+	<link href="/static/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
+	<script src="http://cdn.staticfile.org/html5shiv/3.7.2/html5shiv.min.js"></script>
+	<script src="http://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+	<script src="http://cdn.staticfile.org/jquery/1.11.1/jquery.min.js"></script>
+	<script src="http://cdn.staticfile.org/twitter-bootstrap/3.3.0/js/bootstrap.min.js"></script>
+	<![endif]-->
+
+	<!--[if gte IE 9]><!-->
+	<link href="http://cdn.staticfile.org/twitter-bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
+	<script src="http://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+	<script src="http://cdn.staticfile.org/twitter-bootstrap/3.3.0/js/bootstrap.min.js"></script>
+	<!--<![endif]-->
+
+	<script src="/static/js/common.js?v=20141216"></script>
+
+	<style type="text/css">
+		body {padding-top: 90px;}
+		access_token {}
+	</style>
+
+	<script>
+		"use strict";
+
+		// ErrCodeOK                  = 0
+		// ErrCodeAuthenticateFailed  = 1
+		// ErrCodeBadRequest          = 400
+		// ErrCodeUnauthenticated     = 401
+		// ErrCodeInternalServerError = 500
+
+		$.ajaxSetup({
+			"cache": false //close AJAX cache
+		});
+
+		$(document).ready(function(){
+
+			// 获取 access_token 并添加到链接上
+			var access_token = getAccessToken();
+			if (access_token === "") {
+				window.alert("您没有登录, 请先登录");
+				return;
+			}
+			$("a.access_token").each(function(){
+				$(this).attr("href", $(this).attr("href")+"?access_token="+access_token);
+			});
+
+			// 获取数据并渲染
+			function showTableBody() {
+				$.ajax({
+					"url": "/user/get_userinfo?access_token=" + access_token,
+					"type": "GET",
+					"dataType": "json",
+					"error": function(jqXHR, textStatus, errorThrown) {
+						window.alert("请求出现错误");
+					},
+					"success": function(data, textStatus, jqXHR){
+						switch (data.err_code) {
+						case 0:
+							renderTableBody(data);
+							return;
+						case 401:
+							window.alert("您没有登录, 请先登录");
+							window.location.href = "/user/login.html";
+							return;
+						default:
+							window.alert(data.err_msg);
+							return;
+						}
+					}
+				});
+			}
+
+			// 渲染 table body
+			function renderTableBody(data) {
+				var jqTableBody = $("#table_body");
+				jqTableBody.empty();
+
+				var tr = '<tr><td>' + data.Name + '</td><td>';
+				jqTableBody.append(tr);
+			}
+
+			// 打开显示
+			showTableBody();
+		});
+	</script>
+</head>
+<body>
+	<!--顶部导航-->
+	<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+		<div class="container-fluid">
+			<ul class="nav navbar-nav navbar-left">
+				<li><a class="access_token" href="#">微信分享</a></li>
+			</ul>
+			<ul class="nav navbar-nav navbar-right">
+				<li><a class="access_token" href="/admin/admin_add.html">添加管理员</a></li>
+				<li><a class="access_token" href="/admin/admin_list.html">管理员列表</a></li>
+				<li><a class="access_token" href="/admin/merchant_add.html">添加商家</a></li>
+				<li><a class="access_token" href="/admin/merchant_list.html">商家列表</a></li>
+				<li><a class="access_token" href="/admin/promotion_list.html">活动列表</a></li>
+				<li><a class="access_token" href="/admin/userinfo.html">我的信息</a></li>
+				<li><a class="access_token" href="/admin/mdfpwd.html">修改密码</a></li>
+			</ul>
+		</div>
+	</nav>
+	<div class="container"><div class="row">
+		<table class="table table-hover">
+			<thead>
+				<tr><th>管理员名称</th><th>角色</th></tr>
+			</thead>
+			<tbody id="table_body"></tbody>
+		</table>
+	</div></div>
+</body>
+</html>
+
