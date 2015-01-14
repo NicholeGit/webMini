@@ -12,11 +12,12 @@ import (
 	"github.com/NicholeGit/webMini/frontend"
 	"github.com/NicholeGit/webMini/model"
 
+	"github.com/NicholeGit/webMini/util"
 	"github.com/chanxuehong/util/random"
 )
 
 func init() {
-	http.HandleFunc("/user/login", LoginHandler)
+	util.HandleFunc("/user/login", LoginHandler)
 }
 
 // 登录验证, POST.

@@ -6,10 +6,11 @@ import (
 
 	"github.com/NicholeGit/webMini/frontend"
 	"github.com/NicholeGit/webMini/model"
+	"github.com/NicholeGit/webMini/util"
 )
 
 func init() {
-	http.HandleFunc("/user/get_userinfo", GetUserInfoHandler)
+	util.HandleFunc("/user/get_userinfo", GetUserInfoHandler)
 }
 
 // 获取自己信息, GET.

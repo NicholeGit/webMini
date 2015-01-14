@@ -9,11 +9,12 @@ import (
 
 	"github.com/NicholeGit/webMini/frontend"
 
+	"github.com/NicholeGit/webMini/util"
 	"github.com/chanxuehong/util/random"
 )
 
 func init() {
-	http.HandleFunc("/user/register", registerHandler)
+	util.HandleFunc("/user/register", registerHandler)
 }
 
 // 创建用户, POST.
